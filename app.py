@@ -114,10 +114,13 @@ async def quick_research(request: ResearchRequest):
 if __name__ == "__main__":
     import uvicorn
     
+    # 阿里云函数计算 FC 默认端口为 9000
+    port = int(os.environ.get("PORT", 9000))
+    
     uvicorn.run(
         "app:app",
         host="0.0.0.0",
-        port=8000,
-        reload=True,
+        port=port,
+        reload=False,  # 生产环境关闭热重载
         log_level="info"
     )

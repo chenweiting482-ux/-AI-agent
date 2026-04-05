@@ -3,10 +3,10 @@
 # -AI-agent
 一个可以基于需求对工业AI落地情况进行调研的agent
 >>>>>>> a5724efe890d671065fd767d1315e8a3d14fa774
-# 🏭 工业 AI 调研 Agent
+，hu# 🏭 工业 AI 调研 Agent API
 
-> **一个基于 LangChain + CrewAI 的智能工业 AI 案例调研系统**  
-> 从需求解析到报告生成，自动化完成工业 AI 落地案例的深度调研与分析
+> **一个基于 LangChain + CrewAI 的智能工业 AI 案例调研系统（后端 API）**  
+> 前后端分离架构，提供 RESTful API 接口，支持任意前端框架调用
 
 ---
 
@@ -16,10 +16,11 @@
 - [系统架构](#系统架构)
 - [核心功能](#核心功能)
 - [快速开始](#快速开始)
+- [API 接口文档](#api-接口文档)
 - [项目结构](#项目结构)
 - [技术栈](#技术栈)
 - [配置说明](#配置说明)
-- [使用示例](#使用示例)
+- [前端集成示例](#前端集成示例)
 - [输出报告](#输出报告)
 - [贡献指南](#贡献指南)
 
@@ -27,7 +28,7 @@
 
 ## 🎯 项目简介
 
-**工业 AI 调研 Agent** 是一个智能化的工业 AI 案例调研系统，专为产品经理、行业研究员和企业决策者设计。通过结合大语言模型（LLM）、智能搜索、RAG 知识库和多智能体协作技术，系统能够：
+**工业 AI 调研 Agent** 是一个智能化的工业 AI 案例调研系统后端 API，专为产品经理、行业研究员和企业决策者设计。通过结合大语言模型（LLM）、智能搜索、RAG 知识库和多智能体协作技术，系统能够：
 
 ✅ **自动解析**用户调研需求，提取关键信息  
 ✅ **精准检索**高价值的工业 AI 落地案例  
@@ -40,6 +41,7 @@
 - 🔍 **混合检索机制**：元数据过滤 + 向量检索 + 商业价值排序
 - 🤖 **多智能体协作**：4 个专业角色（解决方案分析师、行业研究员、商业分析师、机会扫描员）
 - 📊 **PM 视角输出**：聚焦大厂切入点、商业闭环、可复制性评估
+- 🔌 **前后端分离**：RESTful API 设计，支持任意前端框架集成
 - 🔒 **本地化部署**：支持 Ollama 本地模型，保护数据隐私
 
 ---
@@ -48,9 +50,16 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      用户输入需求                             │
-│          "AI+化工落地方向案例，产出调研报告"                   │
+│                      前端应用 (任意框架)                       │
+│         React / Vue / Angular / 移动端 / CLI                 │
 └────────────────────┬────────────────────────────────────────┘
+                     │ HTTP/REST API
+    ┌────────────────▼────────────────┐
+    │     FastAPI 后端服务 (端口 8000)   │
+    │     - RESTful API 接口            │
+    │     - CORS 跨域支持              │
+    │     - 自动 API 文档 (/docs)       │
+    └────────────────────────────────┘
                      │
     ┌────────────────▼────────────────┐
     │  D1: 需求解析模块                 │
@@ -64,7 +73,7 @@
     │  - Tavily API 全网检索           │
     │  - 三重过滤（时效性/商业价值/相关性）│
     │  - Mock 模式（无 API Key 可用）   │
-    └────────────────┬────────────────┘
+    └────────────────┬────────────────
                      │
     ┌────────────────▼────────────────┐
     │  D3: RAG 知识库                   │
@@ -85,13 +94,11 @@
     │  - 100 分制规则评分              │
     │  - 5 维度质量检测                │
     │  - 自动反馈与优化                 │
-    └────────────────┬────────────────
+    └────────────────────────────────┘
                      │
     ┌────────────────▼────────────────┐
-    │         输出标准化报告            │
-    │  - Markdown 格式                 │
-    │  - 行业子目录自动分类             │
-    │  - 时间戳版本管理                 │
+    │         返回 JSON 响应             │
+    │  { status, report, error }       │
     └─────────────────────────────────┘
 ```
 
@@ -171,7 +178,7 @@
 
 ```bash
 git clone https://github.com/chenweiting482-ux/-AI-agent.git
-cd 工业AI调研agent
+cd -AI-agent
 ```
 
 2. **创建虚拟环境**
@@ -192,12 +199,6 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> 💡 如果没有 `requirements.txt`，可以手动安装核心依赖：
-> ```bash
-> pip install langchain langchain-openai langchain-community langchain-text-splitters
-> pip install chromadb crewai python-dotenv
-> ```
-
 4. **配置环境变量**
 
 创建 `.env` 文件（在项目根目录）：
@@ -214,18 +215,206 @@ TAVILY_API_KEY=your_tavily_api_key_here
 > - DashScope: [https://dashscope.console.aliyun.com/](https://dashscope.console.aliyun.com/)
 > - Tavily: [https://tavily.com/](https://tavily.com/)
 
-5. **启动 Ollama（可选，用于本地 LLM）**
+5. **启动后端 API 服务**
 
 ```bash
-# 安装 Ollama：https://ollama.ai
-ollama pull qwen2.5:1.5b
-ollama serve
+python app.py
 ```
 
-6. **运行系统**
+服务将在 `http://localhost:8000` 启动
+
+6. **访问 API 文档**
+
+浏览器打开：[http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+## 🔌 API 接口文档
+
+### 基础信息
+
+- **Base URL**: `http://localhost:8000`
+- **Content-Type**: `application/json`
+- **API 文档**: [http://localhost:8000/docs](http://localhost:8000/docs) (Swagger UI)
+- **API 文档**: [http://localhost:8000/redoc](http://localhost:8000/redoc) (ReDoc)
+
+### 接口列表
+
+#### 1. 健康检查
+
+```http
+GET /health
+```
+
+**响应示例**：
+```json
+{
+  "status": "healthy",
+  "service": "industrial-ai-agent"
+}
+```
+
+#### 2. 执行调研
+
+```http
+POST /api/research
+Content-Type: application/json
+
+{
+  "query": "AI+化工落地方向案例，产出报告，优先找有明确节能效果的标杆案例",
+  "skip_clarification": false
+}
+```
+
+**请求参数**：
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| query | string | ✅ | 调研需求描述 |
+| skip_clarification | boolean | ❌ | 是否跳过澄清步骤（默认 false） |
+
+**响应示例**：
+```json
+{
+  "status": "success",
+  "report": "# 化工行业 AI 落地案例深度调研报告\n\n...",
+  "error": null
+}
+```
+
+#### 3. 快速调研（跳过澄清）
+
+```http
+POST /api/quick-research
+Content-Type: application/json
+
+{
+  "query": "AI+化工案例"
+}
+```
+
+等同于调用 `/api/research` 并设置 `skip_clarification: true`
+
+---
+
+## 💻 前端集成示例
+
+### JavaScript / TypeScript (Fetch API)
+
+```javascript
+// 执行调研
+async function runResearch(query) {
+  try {
+    const response = await fetch('http://localhost:8000/api/research', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: query,
+        skip_clarification: false
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.status === 'success') {
+      console.log('调研报告：', result.report);
+      // 在页面上显示报告内容
+      document.getElementById('report').innerHTML = marked.parse(result.report);
+    } else {
+      console.error('调研失败：', result.error);
+    }
+  } catch (error) {
+    console.error('请求失败：', error);
+  }
+}
+
+// 使用示例
+runResearch('AI+化工落地方向案例');
+```
+
+### Python (requests)
+
+```python
+import requests
+
+def run_research(query):
+    url = "http://localhost:8000/api/research"
+    payload = {
+        "query": query,
+        "skip_clarification": False
+    }
+    
+    response = requests.post(url, json=payload)
+    result = response.json()
+    
+    if result["status"] == "success":
+        print("调研报告：")
+        print(result["report"])
+    else:
+        print("调研失败：", result["error"])
+
+# 使用示例
+run_research("AI+化工落地方向案例")
+```
+
+### cURL
 
 ```bash
-python main_entra.py
+curl -X POST http://localhost:8000/api/research \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "AI+化工落地方向案例",
+    "skip_clarification": false
+  }'
+```
+
+### React 组件示例
+
+```jsx
+import { useState } from 'react';
+
+function ResearchAgent() {
+  const [query, setQuery] = useState('');
+  const [report, setReport] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleResearch = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:8000/api/research', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, skip_clarification: false })
+      });
+      const result = await response.json();
+      if (result.status === 'success') {
+        setReport(result.report);
+      }
+    } catch (error) {
+      console.error('调研失败：', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <input 
+        value={query} 
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="输入调研需求..."
+      />
+      <button onClick={handleResearch} disabled={loading}>
+        {loading ? '调研中...' : '开始调研'}
+      </button>
+      {report && <div dangerouslySetInnerHTML={{ __html: report }} />}
+    </div>
+  );
+}
+
+export default ResearchAgent;
 ```
 
 ---
@@ -234,7 +423,8 @@ python main_entra.py
 
 ```
 工业AI调研agent/
-├── main_entra.py                 # 主入口文件
+├── app.py                        # FastAPI 后端接口（端口 9000）
+├── main_entra.py                 # Agent 主入口
 ├── d1_requirement_parser.py      # D1: 需求解析模块
 ├── d2_search_tool.py             # D2: 精准检索模块
 ├── d3_rag_library.py             # D3: RAG 知识库
@@ -248,231 +438,13 @@ python main_entra.py
 │   └── 虚拟电厂/
 │       └── 虚拟电厂_调研报告_20260405_154500.md
 │
+├── Dockerfile                    # Docker 容器镜像配置（阿里云 FC）
+├── s.yaml                        # Serverless Devs 部署配置
+├── .dockerignore                 # Docker 忽略文件
+├── frontend-integration.json     # 前端对接文档
+├── FC_DEPLOYMENT.md              # 阿里云 FC 部署指南
+│
 ├── .env                          # 环境变量配置文件（不提交到 Git）
 ├── .gitignore                    # Git 忽略规则
 ├── README.md                     # 项目说明文档
 └── requirements.txt              # Python 依赖列表
-```
-
----
-
-## 🛠️ 技术栈
-
-| 类别 | 技术 | 用途 |
-|------|------|------|
-| **框架** | LangChain 0.2+ | LLM 应用开发框架 |
-| **多智能体** | CrewAI | D4 四角色协作分析 |
-| **本地 LLM** | Ollama + Qwen2.5:1.5b | D1 需求解析（可选） |
-| **云端 LLM** | DashScope（通义千问） | D1/D3/D4 核心推理 |
-| **Embedding** | DashScope text-embedding-v2 | 向量嵌入（1536 维） |
-| **向量数据库** | ChromaDB | 案例知识库存储与检索 |
-| **网络搜索** | Tavily API | 全网案例检索（可选） |
-| **环境管理** | python-dotenv | 环境变量加载 |
-
----
-
-## ⚙️ 配置说明
-
-### 混合 LLM 架构
-
-项目采用 **本地 + 云端** 混合架构：
-
-| 模块 | 默认模型 | 配置方式 | 说明 |
-|------|---------|---------|------|
-| D1 需求解析 | `qwen2.5:1.5b`（本地） | `use_local=True` | 快速响应，节省 API 成本 |
-| D3 元数据提取 | `qwen-turbo`（云端） | `use_local=False` | 高精度结构化提取 |
-| D4 CrewAI 分析 | `qwen-turbo`（云端） | 环境变量配置 | 多角色深度推理 |
-
-**切换配置**（在 `llm_config.py` 中）：
-
-```python
-# D1 使用本地模型（默认）
-llm = get_llm(use_local=True)
-
-# 切换到云端模型
-llm = get_llm(use_local=False)
-```
-
-### 环境变量
-
-| 变量名 | 必填 | 说明 |
-|--------|------|------|
-| `DASHSCOPE_API_KEY` | ✅ 必需 | 阿里云 DashScope API Key |
-| `TAVILY_API_KEY` | ⚠️ 可选 | Tavily 搜索 API Key（无则使用 Mock 数据） |
-
----
-
-## 📝 使用示例
-
-### 示例 1：基础调研
-
-```bash
-python main_entra.py "AI+化工的落地方向案例，产出报告，优先找有明确节能效果的标杆案例"
-```
-
-### 示例 2：指定细分行业
-
-```bash
-python main_entra.py "AI+石油化工催化剂优化，国外头部企业案例，华东地区"
-```
-
-### 示例 3：交互式输入
-
-```bash
-python main_entra.py
-```
-
-然后在提示符下输入：
-
-```
-🔍 请输入调研需求（如：AI+化工落地方向案例，产出报告）：
-> AI+虚拟电厂标杆案例及切入点分析，关注国内头部企业
-```
-
-### 示例 4：交互式模糊需求
-
-如果输入过于简单（如 "AI+化工案例"），系统会引导补充：
-
-```
-⚠️  需求模糊，请补充：
-1. 需求类型：落地方向 / 案例汇总 / 切入点分析 / 竞品对比
-2. 核心侧重点：节能效果 / 商业价值 / 技术架构
-3. 目标行业/细分领域：石油化工 / 精细化工 / ...
-
-请输入补充信息（直接回车跳过）：
-```
-
----
-
-## 📊 输出报告
-
-报告自动保存到 `output_reports/` 目录下，按行业分类：
-
-```
-output_reports/
-├── 化工/
-│   └── 化工_调研报告_20260405_153000.md
-└── 虚拟电厂/
-    └── 虚拟电厂_调研报告_20260405_154500.md
-```
-
-### 报告结构
-
-```markdown
-# 化工行业 AI 落地案例深度调研报告
-**生成日期**：2026 年 04 月 05 日 | **调研视角**：互联网大厂 PM
-
----
-
-## 执行摘要
-- 核心洞察：3-5 点关键结论
-- 市场机会：切入点简述
-- 关键数据：平均节能率、平均 ROI、典型部署周期
-
----
-
-## 1. 产品解决方案深度拆解
-
-### 案例 1：横河电机 AI 化工流程优化项目
-- **核心功能**：...
-- **技术架构**：数据层→算法层→应用层
-- **实施流程**：...
-- **核心优势**：节能 8.3%，降本 1200 万/年
-- **核心劣势**：...
-- **落地门槛**：...
-
----
-
-## 2. 行业适配性分析
-- 核心生产痛点（量化）
-- AI 方案覆盖度评估
-- 行业政策环境影响
-
----
-
-## 3. 商业价值量化分析
-| 案例 | 收费模式 | ROI | 合同额 | 回收周期 |
-|------|---------|-----|--------|---------|
-| 横河电机 | 项目制 | 18 个月 | 3000 万 | 1.5 年 |
-
----
-
-## 4. 大厂切入点专项分析（核心）
-### 现有方案缺口
-1. ...
-
-### 大厂差异化优势
-1. 云原生部署能力
-2. 大模型推理效率
-3. ...
-
-### 具体切入路径
-- **切入角色**：平台提供商
-- **切入时机**：数据底座阶段
-- **切入产品**：...
-
-### 落地难点与应对
-- 难点 1：行业 Know-how 不足 → 应对：...
-- 难点 2：数据安全顾虑 → 应对：...
-
-### 优先推荐方向（TOP3）
-1. **方向一**（理由）
-2. **方向二**（理由）
-3. **方向三**（理由）
-
----
-
-> **审核记录** | ✅ 审核通过 | 得分: 85/100
-> 评分维度：解决方案深度(25) + 量化数据(25) + 大厂切入(20) + 商业逻辑(15) + 字数(15)
-```
-
----
-
-## 🤝 贡献指南
-
-欢迎贡献代码、报告建议或 Bug 反馈！
-
-### 贡献流程
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
-
-### 开发注意事项
-
-- 遵循 PEP 8 编码规范
-- 所有 API Key 必须配置在 `.env` 文件中，**禁止硬编码**
-- 新增功能需同步更新本文档
-
----
-
-## 📄 许可证
-
-本项目采用 MIT 许可证。详见 [LICENSE](LICENSE) 文件。
-
----
-
-## 🙏 致谢
-
-- [LangChain](https://github.com/langchain-ai/langchain) - LLM 应用开发框架
-- [CrewAI](https://github.com/joaomdmoura/crewai) - 多智能体协作框架
-- [Ollama](https://ollama.ai) - 本地 LLM 运行工具
-- [通义千问](https://dashscope.aliyun.com/) - 云端 LLM 服务
-- [ChromaDB](https://www.trychroma.com/) - 向量数据库
-
----
-
-## 📮 联系方式
-
-- **GitHub**: [@chenweiting482-ux](https://github.com/chenweiting482-ux)
-- **Email**: chenweiting482@gmail.com
-
----
-
-<<<<<<< HEAD
-**⭐ 如果觉得这个项目对你有帮助，请给个 Star 支持一下！**
-=======
-**⭐ 如果觉得这个项目对你有帮助，请给个 Star 支持一下！**
->>>>>>> a5724efe890d671065fd767d1315e8a3d14fa774

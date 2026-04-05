@@ -1,0 +1,43 @@
+{
+  "api_endpoint": "http://localhost:9000",
+  "endpoints": {
+    "health": "/health",
+    "research": "/api/research",
+    "quick_research": "/api/quick-research"
+  },
+  "request_examples": {
+    "research": {
+      "method": "POST",
+      "url": "/api/research",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "query": "AI+化工落地方向案例",
+        "skip_clarification": false
+      }
+    },
+    "quick_research": {
+      "method": "POST",
+      "url": "/api/quick-research",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "query": "AI+化工案例"
+      }
+    }
+  },
+  "response_format": {
+    "success": {
+      "status": "success",
+      "report": "Markdown 格式的调研报告",
+      "error": null
+    },
+    "error": {
+      "status": "error",
+      "report": null,
+      "error": "错误信息"
+    }
+  }
+}

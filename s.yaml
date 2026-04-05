@@ -1,0 +1,49 @@
+# 阿里云函数计算 FC 3.0 配置文件
+# 使用 Serverless Devs 工具部署：https://www.serverless-devs.com/
+
+edition: 3.0.0
+name: industrial-ai-agent
+access: default
+
+vars:
+  region: cn-shanghai
+  service:
+    name: industrial-ai-agent
+    description: 工业 AI 调研 Agent 后端服务
+
+resources:
+  # Web 应用（自动配置 API 网关）
+  industrial-ai-agent-api:
+    component: fc3
+    props:
+      region: ${vars.region}
+      functionName: industrial-ai-agent
+      description: 工业 AI 调研 Agent API 服务
+      runtime: custom.debian10
+      code: ./
+      instanceConcurrency: 10  # 并发实例数
+      timeout: 300  # 超时时间 300 秒（AI 推理可能较慢）
+      memorySize: 4096  # 内存 4GB（LLM 推理需要较大内存）
+      cpu: 2.0  # CPU 2 核
+      diskSize: 512  # 磁盘 512MB
+      environmentVariables:
+        PORT: '9000'
+        DASHSCOPE_API_KEY: ''  # 在控制台配置，不要硬编码
+        TAVILY_API_KEY: ''  # 在控制台配置
+      customRuntimeConfig:
+        command:
+          - python
+          - app.py
+        port: 9000
+      triggers:
+        - triggerName: httpTrigger
+          triggerType: http
+          triggerConfig:
+            authType: anonymous
+            disableURLInternet: false
+            methods:
+              - GET
+              - POST
+      tags:
+        project: industrial-ai-agent
+        environment: production

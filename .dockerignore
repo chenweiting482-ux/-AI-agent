@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 数据文件
+chroma_db/
+output_reports/
+*.db
+*.sqlite
+
+# 日志
+*.log
+
+# 文档（Docker 镜像不需要）
+README.md
+DEPLOYMENT.md
+QUICK_START.md
+CLOUD_DEPLOYMENT_RECORD.md
