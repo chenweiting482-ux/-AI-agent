@@ -21,15 +21,14 @@ resources:
       description: 工业 AI 调研 Agent API 服务
       runtime: custom.debian10
       code: ./
-      instanceConcurrency: 10  # 并发实例数
-      timeout: 300  # 超时时间 300 秒（AI 推理可能较慢）
-      memorySize: 4096  # 内存 4GB（LLM 推理需要较大内存）
-      cpu: 2.0  # CPU 2 核
-      diskSize: 512  # 磁盘 512MB
+      instanceConcurrency: 10
+      timeout: 300
+      memorySize: 4096
+      cpu: 2.0
+      diskSize: 512
       environmentVariables:
         PORT: '9000'
-        DASHSCOPE_API_KEY: ''  # 在控制台配置，不要硬编码
-        TAVILY_API_KEY: ''  # 在控制台配置
+        # DASHSCOPE_API_KEY 和 TAVILY_API_KEY 请在阿里云控制台配置
       customRuntimeConfig:
         command:
           - python
