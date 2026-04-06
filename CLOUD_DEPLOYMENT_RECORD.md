@@ -5,7 +5,6 @@
 **项目名称**: 工业 AI 调研 Agent  
 **技术架构**: 基于 LangChain 的多智能体系统，包含 D1→D2→D3→D4→D5 五阶段工作流  
 **部署方式**: 阿里云 ECS 服务器 + Gradio Web 界面 + FastAPI  
-**创建时间**: 2026-04-05  
 **最后更新**: 2026-04-05
 
 ---
@@ -14,7 +13,6 @@
 
 | 项目 | 值 |
 |------|-----|
-| **服务器 IP** | 172.19.43.169（内网）|
 | **SSH 端口** | 22 |
 | **操作系统** | Ubuntu |
 | **Python 版本** | 3.12 |
@@ -43,16 +41,7 @@ langchain-core==1.2.26
 langchain-openai==1.1.12
 langchain-text-splitters==1.1.1
 langchain-ollama
-```
-
-### API Key 配置
-
-- **DASHSCOPE_API_KEY**: `sk-10a0d08a2ece457899aa5574b4f38bea`
-- **配置文件**: `/root/-AI-agent/.env`
-- **格式**: UTF-8 编码，`KEY=VALUE` 格式
-- **注意**: `.env` 文件不提交到 Git，需要手动配置
-
----
+`--
 
 ## 📁 项目文件结构
 
