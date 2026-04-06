@@ -1,6 +1,3 @@
-# 阿里云函数计算 FC 3.0 配置文件
-# 使用 Serverless Devs 工具部署：https://www.serverless-devs.com/
-
 edition: 3.0.0
 name: industrial-ai-agent
 access: default
@@ -28,7 +25,6 @@ resources:
       diskSize: 512
       environmentVariables:
         PORT: '9000'
-        # DASHSCOPE_API_KEY 和 TAVILY_API_KEY 请在阿里云控制台配置
       customRuntimeConfig:
         command:
           - python
