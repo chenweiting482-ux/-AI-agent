@@ -34,15 +34,6 @@ resources:
           - python
           - app.py
         port: 9000
-      triggers:
-        - triggerName: httpTrigger
-          triggerType: http
-          triggerConfig:
-            authType: anonymous
-            disableURLInternet: false
-            methods:
-              - GET
-              - POST
       tags:
         project: industrial-ai-agent
         environment: production
