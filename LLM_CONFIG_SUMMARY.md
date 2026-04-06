@@ -20,7 +20,7 @@
 ```env
 # 阿里云 DashScope API Key（用于 D3/D4-5）
 # 获取地址: https://dashscope.console.aliyun.com/apiKey
-DASHSCOPE_API_KEY=sk-10a0d08a2ece457899aa5574b4f38bea
+
 
 # Tavily 搜索 API Key（用于 D2）
 # 获取地址: https://app.tavily.com/home
